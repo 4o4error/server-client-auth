@@ -8,7 +8,7 @@
 #include "config_reader_build_opts.h"
 namespace config{
   template <typename ParseRule>
-  class CONFIG_READER_EXPORT_SYMBOL BasicReader{
+  class BasicReader{
     class Impl{
       friend BasicReader;
       std::map<std::string, std::string> PropertyMap;
@@ -52,7 +52,7 @@ namespace config{
     }
   };
 
-  class CONFIG_READER_EXPORT_SYMBOL ParseOnEqual{
+  class ParseOnEqual{
   public:
     static const std::string getParseSymbol(){
       return "=";

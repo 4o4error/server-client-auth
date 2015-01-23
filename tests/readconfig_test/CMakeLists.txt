@@ -8,8 +8,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
 FIND_PACKAGE(GTestLocal)
 
-link_directories(${CMAKE_SOURCE_DIR}/build/)
-include_directories(${CMAKE_SOURCE_DIR}/dependencies
+link_directories(${PROJECT_SOURCE_DIR}/build/)
+include_directories(${PROJECT_SOURCE_DIR}/
                     ${GTest_INCLUDE_DIR})
 
 
@@ -17,12 +17,14 @@ SET ( SOURCE_FILES_CONFIG_READER
 "test_configuration_reader.cpp")
 
 SET (LINK_LIBS_CONFIG
-  config.dll
+  
 )
 
 SET (LINK_LIBS_CONFIG
   ${GTest_LIBRARY}
 )
+
+message(${LINK_LIBS_CONFIG})
 IF(WIN32)
   SET(LINK_LIBS_CONFIG
     ws2_32.lib
@@ -38,4 +40,4 @@ ELSEIF(UNIX AND NOT APPLE)
 ENDIF()
 
 add_executable (test_configuration_reader test_configuration_reader.cpp)
-target_link_libraries(test_configuration_reader ${LINK_LIBS_CONFIG})
+target_link_libraries(test_configuration_reader config ${LINK_LIBS_CONFIG})

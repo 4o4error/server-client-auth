@@ -14,7 +14,8 @@ SET (SOURCE_FILES_CONFIG
  "${CMAKE_CURRENT_SOURCE_DIR}/ConfigClass.cpp"
  "${CMAKE_CURRENT_SOURCE_DIR}/ConfigException.h"
  "${CMAKE_CURRENT_SOURCE_DIR}/ConfigException.cpp"
- "${CMAKE_CURRENT_SOURCE_DIR}/ConfigReader.h")
+ "${CMAKE_CURRENT_SOURCE_DIR}/ConfigReader.h"
+ "${CMAKE_CURRENT_SOURCE_DIR}/ConfigReader.cpp")
  
 SOURCE_GROUP("config" FILES
   ${SOURCE_FILES_CONFIG}
@@ -25,9 +26,6 @@ add_library(config SHARED ${SOURCE_FILES_CONFIG})
 # ---------------- Link Libraries section --------------------
 # Set the link options: the libraries to link against. Store them in a temporary variable
 # as these are the common, cross-system link libraries.
-SET (LINK_LIBS_CONFIG
-  #${GUSLIB_LIBRARY}
-)
 
 # Append OS system specific libraries.
 IF(WIN32)
