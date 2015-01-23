@@ -1,1 +1,0 @@
-Github doesn't commit empty folders

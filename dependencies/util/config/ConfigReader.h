@@ -52,7 +52,7 @@ namespace config{
     }
   };
 
-  class CONFIG_READER_EXPORT_SYMBOL ParseOnEqual{
+  class ParseOnEqual{
   public:
     static const std::string getParseSymbol(){
       return "=";

@@ -1,11 +1,7 @@
-#Server build system
-
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
-MESSAGE("Building Server library")
-
-
-
-# Set the include paths for the CMake scripts that will be used to find other libs.
+if(TEST_CONFIG_READER)
+add_subdirectory(readconfig_test)
+endif()
