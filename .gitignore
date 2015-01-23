@@ -29,3 +29,4 @@
 
 # Exclude the build folder
 build/*
+documentation/html/*

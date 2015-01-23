@@ -41,7 +41,7 @@ if(BUILD_UNIT_TESTS)
 endif()
 
 #doxygen configuration based on the method found  @ https://mementocodex.wordpress.com/2013/01/19/how-to-generate-code-documentation-with-doxygen-and-cmake-a-slightly-improved-approach/
-option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ON)
+option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" OFF)
 IF(BUILD_DOCUMENTATION)
  
   FIND_PACKAGE(Doxygen)
