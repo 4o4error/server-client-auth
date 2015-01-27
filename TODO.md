@@ -3,10 +3,10 @@
 
 
 - Alex : database 
-            - db c++ connection
+            * db c++ connection
             
-            - connection interface (CRUD operations) 
-            - 
+            * connection interface (CRUD operations) 
+             
 - Petru : lib client 
 
             * interface for programs using the library
