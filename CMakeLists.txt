@@ -18,7 +18,7 @@ OPTION(BUILD_SERVER "Build server lib" ON)
 OPTION(BUILD_CLIENT "Build Client lib" ON)
 OPTION(BUILD_UTIL "Build util lib" ON)
 
-OPTION(BUILD_UNIT_TESTS "Build unit tests" ON)
+OPTION(BUILD_UNIT_TESTS "Build unit tests" OFF)
 
 #
 # Also load the CMakeLists file in sub-folders.
