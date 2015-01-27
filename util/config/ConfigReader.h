@@ -5,7 +5,7 @@
 #include <sstream>
 #include <fstream>
 
-#include "config_reader_build_opts.h"
+#include "util_build_opts.h"
 namespace config{
   template <typename ParseRule>
   class BasicReader{

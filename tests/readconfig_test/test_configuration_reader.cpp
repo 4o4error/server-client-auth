@@ -1,16 +1,30 @@
 #include "util\config\ConfigReader.h"
 #include "util\config\ConfigClass.h"
+#include "util\hash\Hash.h"
 #include "gtest\gtest.h"
 #include <iostream>
 
 using namespace config;
 
+void main(){
+
+  Hash hash;
+  std::string password = "Areyou92!@#$%";
+  std::string cript = hash.Encrypt(password);
+  std::cout << password << std::endl;
+  std::cout << cript << std::endl;
+  std::cout << hash.Decrypt(cript) << std::endl;
+
+}
+
+
+/*
 class GoodConfigTest : public ::testing::Test{
   ConfigReader cr;
   ConfigClass c;
 protected:
 	virtual void SetUp(){
-		c = cr.readIniFile<ConfigClass>("C:\\Users\\Krull\\Documents\\Visual Studio 2013\\Projects\\ConfigFileReader\\test.conf");
+		c = cr.readIniFile<ConfigClass>("C:\\Users\\alexandra.vintila\\Documents\\GitHub\\Repo\\server-client-auth\\tests\\readconfig_test\\test.conf");
 	}
 	//virtual void TearDown(){}
 	ConfigClass& getConfigClass(){
@@ -22,7 +36,7 @@ class BadConfigTest : public ::testing::Test {
   ConfigClass c;
 protected:
   virtual void SetUp(){
-     c = cr.readIniFile<ConfigClass>("C:\\Users\\Krull\\Documents\\Visual Studio 2013\\Projects\\ConfigFileReader\\testincorect.conf");
+     c = cr.readIniFile<ConfigClass>("C:\\Users\\alexandra.vintila\\Documents\\GitHub\\Repo\\server-client-auth\\tests\\readconfig_test\\testincorect.conf");
   }
   //virtual void TearDown(){}
   ConfigClass& getConfigClass(){
@@ -36,7 +50,7 @@ class MalformedConfigTest : public ::testing::Test{
 protected:
   virtual void SetUp(){
     try{
-      c = cr.readIniFile<ConfigClass>("C:\\Users\\Krull\\Documents\\Visual Studio 2013\\Projects\\ConfigFileReader\\testmalformed.conf");
+      c = cr.readIniFile<ConfigClass>("C:\\Users\\alexandra.vintila\\Documents\\GitHub\\Repo\\server - client - auth\\tests\\readconfig_test\\testmalformed.conf");
     }
     catch (std::exception& e){
       throw e;
@@ -92,3 +106,4 @@ int main(int argc, char **argv){
 	return RUN_ALL_TESTS();
 }
 
+*/

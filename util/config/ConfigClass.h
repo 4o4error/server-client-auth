@@ -4,11 +4,11 @@
 #include "IConfigClass.h"
 #include <iostream>
 
-#include "config_reader_build_opts.h"
+#include "util_build_opts.h"
 
 namespace config{
 
-  class CONFIG_READER_EXPORT_SYMBOL ConfigClass : public IConfigClass{
+  class UTIL_EXPORT_SYMBOL ConfigClass : public IConfigClass{
   private:
     class Impl;
     Impl* Impl_;

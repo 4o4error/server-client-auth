@@ -40,4 +40,4 @@ ELSEIF(UNIX AND NOT APPLE)
 ENDIF()
 
 add_executable (test_configuration_reader test_configuration_reader.cpp)
-target_link_libraries(test_configuration_reader config ${LINK_LIBS_CONFIG})
+target_link_libraries(test_configuration_reader util ${LINK_LIBS_CONFIG})
