@@ -11,9 +11,9 @@ namespace config{
 
   ConfigClass::ConfigClass() : Impl_(new Impl){ }
   ConfigClass::~ConfigClass() { delete Impl_; }
-  const std::string& ConfigClass::getHost() const{ return Impl_->host_; }
-  const std::string& ConfigClass::getPort() const { return Impl_->port_; }
-  const std::string& ConfigClass::getId() const{ return Impl_->id_; }
+  const std::string ConfigClass::getHost() const{ return Impl_->host_; }
+  const std::string ConfigClass::getPort() const { return Impl_->port_; }
+  const std::string ConfigClass::getId() const{ return Impl_->id_; }
 
   void  ConfigClass::setProprietaries(std::map<std::string, std::string>& ProprietariesMap) {
     try{
@@ -26,18 +26,25 @@ namespace config{
     }
   }
   ConfigClass::ConfigClass(ConfigClass&& other){
-    Impl_->host_ = std::move(other.getHost());
-    Impl_->port_ = std::move(other.getPort());
-    Impl_->id_ = std::move(other.getId());
+    if (this != &other){
+      Impl_ = new Impl;
+      Impl_->host_ = other.getHost();
+      Impl_->port_ = other.getPort();
+      Impl_->id_ = other.getId();
+    }
   }
 
   ConfigClass::ConfigClass(const ConfigClass& other){
-    Impl_->host_ = other.getHost();
-    Impl_->port_ = other.getPort();
-    Impl_->id_ = other.getId();
+    if (this != &other){
+      Impl_ = new Impl;
+      Impl_->host_ = other.getHost();
+      Impl_->port_ = other.getPort();
+      Impl_->id_ = other.getId();
+    }
   }
   ConfigClass&  ConfigClass::operator=(ConfigClass& other){
     if (this != &other){
+      Impl_ = new Impl;
       Impl_->host_ = other.getHost();
       Impl_->port_ = other.getPort();
       Impl_->id_ = other.getId();

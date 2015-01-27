@@ -19,9 +19,9 @@ namespace config{
     ConfigClass(const ConfigClass& other);
     ConfigClass& operator=(ConfigClass& other);
 
-    const std::string& getHost() const;
-    const std::string& getPort() const;
-    const std::string& getId() const;
+    const std::string getHost() const;
+    const std::string getPort() const;
+    const std::string getId() const;
 
     void setProprietaries(std::map<std::string, std::string>& ProprietariesMap) override;
 

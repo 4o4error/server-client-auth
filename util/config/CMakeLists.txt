@@ -15,7 +15,9 @@ SET (SOURCE_FILES_CONFIG
  "${CMAKE_CURRENT_SOURCE_DIR}/ConfigException.h"
  "${CMAKE_CURRENT_SOURCE_DIR}/ConfigException.cpp"
  "${CMAKE_CURRENT_SOURCE_DIR}/ConfigReader.h"
- "${CMAKE_CURRENT_SOURCE_DIR}/ConfigReader.cpp")
+ "${CMAKE_CURRENT_SOURCE_DIR}/ConfigReader.cpp"
+ "${CMAKE_CURRENT_SOURCE_DIR}/ConfigFactory.h")
+ 
  
 SOURCE_GROUP("config" FILES
   ${SOURCE_FILES_CONFIG}

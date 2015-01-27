@@ -15,23 +15,24 @@ namespace config{
     };
     Impl* Impl_;
   private:
-
+   
     void parse(const std::string& iniFilePath){
       std::ifstream file;
-      file.open(iniFilePath);
-
-      std::string id, eq, val, line = "";
-
-
-      while (std::getline(file, line)){
-        std::stringstream ss(line);
-        ss >> id >> eq >> val;
-        if (id[0] == ParseRule::getCommentSymbol()) continue;
-        if (id[0] == ParseRule::getCategorySymbol()) continue;
-        if (eq.compare(ParseRule::getParseSymbol()) != 0) {
-          throw std::exception("wrong ini syntax");  // change to other type of exception
+      file.open(iniFilePath); 
+      
+      if (file.good()){
+        std::string id, eq, val, line = "";
+        
+        while (std::getline(file, line)){
+          std::stringstream ss(line);
+          ss >> id >> eq >> val;
+          if (id[0] == ParseRule::getCommentSymbol()) continue;
+          if (id[0] == ParseRule::getCategorySymbol()) continue;
+          if (eq.compare(ParseRule::getParseSymbol()) != 0) {
+            throw std::exception("wrong ini syntax");  // change to other type of exception
+          }
+          Impl_->PropertyMap[id] = val;
         }
-        Impl_->PropertyMap[id] = val;
       }
 
     }
@@ -48,7 +49,7 @@ namespace config{
       }
       ConfigClass c;
       c.setProprietaries(Impl_->PropertyMap);
-      return c;
+      return std::move(c);
     }
   };
 
