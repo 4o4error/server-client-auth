@@ -8,6 +8,8 @@ namespace config{
   protected:
     const char* exception_;
     ConfigException(const char* exception);
+  public:
+    ConfigException(){}
     const char* what() const override;
   };
 }
