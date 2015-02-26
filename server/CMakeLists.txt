@@ -1,11 +1,49 @@
-#Server build system
+SET(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../CMake/;${PROJECT_SOURCE_DIR}/CMake/;${CMAKE_ROOT}/Modules;${CMAKE_MODULE_PATH}")
+
+MESSAGE("#Building Server#")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 
-MESSAGE("Building Server library")
 
 
+find_package(OpenSSL REQUIRED)
+SET(ASIO_INCLUDE_DIR CACHE "ASIO_INCLUDE_DIR?" FORCE)
+link_directories(${PROJECT_SOURCE_DIR}/build/)
+include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${OPENSSL_INCLUDE_DIR} ${ASIO_INCLUDE_DIR})
+SET ( SOURCE_FILES_SERVER
+"${CMAKE_CURRENT_SOURCE_DIR}/server.cpp"
+"${CMAKE_CURRENT_SOURCE_DIR}/Connection.hpp"
+"${CMAKE_CURRENT_SOURCE_DIR}/Connection.cpp"
+"${CMAKE_CURRENT_SOURCE_DIR}/DbConnection.h"
+"${CMAKE_CURRENT_SOURCE_DIR}/DbConnection.cpp"
 
-# Set the include paths for the CMake scripts that will be used to find other libs.
+)
+
+
+SET (LINK_LIBS_SERVER
+  ${OPENSSL_LIBRARIES}
+)
+
+message(${LINK_LIBS_SERVER})
+IF(WIN32)
+  SET(LINK_LIBS_SERVER
+    ws2_32.lib
+    winmm.lib
+    config.lib
+    ${LINK_LIBS_SERVER}
+    )
+ELSEIF(UNIX AND NOT APPLE)
+  SET(LINK_LIBS_SERVER
+    config.lib
+    ${X11_X11_LIB}
+    ${X11_Xrandr_LIB}
+    ${LINK_LIBS_SERVER}
+    )
+ENDIF()
+add_definitions(-DASIO_STANDALONE -D_WIN32_WINNT=0x0501 )
+ADD_DEFINITIONS(-DUNICODE -D_UNICODE)
+add_executable (server ${SOURCE_FILES_SERVER})
+target_link_libraries(server  ${LINK_LIBS_SERVER})
