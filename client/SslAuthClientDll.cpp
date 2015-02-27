@@ -39,8 +39,6 @@ namespace auth
 		friend client;
 	};
 
-
-
 	client::client()
 		: impl_ptr(new impl())
 	{
@@ -48,7 +46,6 @@ namespace auth
 		auto f = std::bind(&client::verify_certificate, this, std::placeholders::_1, std::placeholders::_2);
 		impl_ptr->socket_.set_verify_callback(f);
 	}
-
 
 	client::~client()
 	{
@@ -66,10 +63,9 @@ namespace auth
 		}
 	}
 
-	client& client::Instance()
+	client* client::Instance()
 	{
-		static client instance;
-
+		static client* instance = new client();
 		return instance;
 	}
 
@@ -119,8 +115,8 @@ namespace auth
 		}
 	}
 
-	void client::get_license(){
-
+	void client::get_license()
+	{
 		impl_ptr->background_thread = std::make_unique<std::thread>(&client::request_license, this);
 	}
 

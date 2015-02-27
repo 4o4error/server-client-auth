@@ -24,7 +24,7 @@ namespace auth
 	{
 	public:
 
-		static client& Instance();
+		static client* Instance();
 
 		void setLostConnectionNotifier(const std::function<void(void)>& callback);
 		void setLostConnectionNotifier(std::function<void(void)>&& callback);
@@ -38,7 +38,6 @@ namespace auth
 
 		client();
 		client(const client &old) = delete; // disallow copy constructor
-
 		void request_license();
 		const client &operator=(const client &old) = delete; //disallow assignment operator
 		bool verify_certificate(bool preverified, asio::ssl::verify_context& ctx);
