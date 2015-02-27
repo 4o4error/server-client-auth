@@ -1,183 +1,130 @@
 #include "SslClientAuthDll.h"
 
-class client::impl
+namespace auth
 {
-
-	/*client::impl(std::string host, std::string port, std::string certificate, const std::function<void(void)>& callback)
-		: context_(asio::ssl::context::sslv23),
-		socket_(io_service_, context_),
-		callback(std::move(callback)),
-		host_(host),
-		port_(port),
-		certificate_(certificate)
+	class client::impl
 	{
-		this->request_ = "getLicense";
-		this->license_ = "Nothing";
-		this->license_is_set_ = false;
-		this->close_connection_ = false;
-		this->background_thread = nullptr;
-		this->future_ = this->promise_.get_future();
-	}*/
+		client::impl()
+			: context_(asio::ssl::context::sslv23),
+			socket_(io_service_, context_)
+		{
+			this->host_ = "";
+			this->port_ = "";
+			this->certificate_ = "";
+			this->request_ = "getLicense";
+			this->license_ = "Nothing";
+			this->license_is_set_ = false;
+			this->close_connection_ = false;
+			this->background_thread = nullptr;
+			this->future_ = this->promise_.get_future();
 
-	client::impl()
-		: context_(asio::ssl::context::sslv23),
-		socket_(io_service_, context_)
+		}
+
+		asio::io_service io_service_;
+		asio::ssl::context context_;
+		asio::ssl::stream<asio::ip::tcp::socket> socket_;
+		std::string request_;
+		char reply_[max_length];
+		bool license_is_set_;
+		bool close_connection_;
+		std::string license_;
+		std::string certificate_;
+		std::string host_;
+		std::string port_;
+		std::unique_ptr<std::thread> background_thread;
+		std::function<void(void)> callback = [](){};
+		asio::ip::tcp::resolver::iterator endpoint_iterator;
+		std::promise<std::string> promise_;
+		std::future<std::string> future_;
+		friend client;
+	};
+
+
+
+	client::client()
+		: impl_ptr(new impl())
 	{
-		this->host_ = "";
-		this->port_ = "";
-		this->certificate_ = "";
-		this->request_ = "getLicense";
-		this->license_ = "Nothing";
-		this->license_is_set_ = false;
-		this->close_connection_ = false;
-		this->background_thread = nullptr;
-		this->future_ = this->promise_.get_future();
+		impl_ptr->socket_.set_verify_mode(asio::ssl::verify_peer);
+		auto f = std::bind(&client::verify_certificate, this, std::placeholders::_1, std::placeholders::_2);
+		impl_ptr->socket_.set_verify_callback(f);
+	}
+
+
+	client::~client()
+	{
 
 	}
 
-	asio::io_service io_service_;
-	asio::ssl::context context_;
-	asio::ssl::stream<asio::ip::tcp::socket> socket_;
-	std::string request_;
-	char reply_[max_length];
-	bool license_is_set_;
-	bool close_connection_;
-	std::string license_;
-	std::string certificate_;
-	std::string host_;
-	std::string port_;
-	std::unique_ptr<std::thread> background_thread;
-	std::function<void(void)> callback = [](){};
-	asio::ip::tcp::resolver::iterator endpoint_iterator;
-	std::promise<std::string> promise_;
-	std::future<std::string> future_;
-	friend client;
-};
-
-
-//client::client(std::string host, std::string port, std::string certificate, std::function<void(void)>&& callback)
-//	:impl_ptr(new client::impl(host, port, certificate, callback))
-//{
-//	init();
-//}
-
-client::client()
-	: impl_ptr(new impl())
-{
-	init();
-}
-
-
-client::~client()
-{
-	this->destroy();
-}
-
-void client::destroy()
-{
-	impl_ptr->close_connection_ = true;
-
-	if (impl_ptr->background_thread->joinable())
+	void client::destroy()
 	{
-		impl_ptr->background_thread->join();
-	}
-}
 
-bool client::closeConnection(bool&& close_connection)
-{
-	std::unique_lock<std::mutex> lock(this->mtx);
-	if (close_connection == true)
+		impl_ptr->close_connection_ = true;
+
+		if (impl_ptr->background_thread->joinable())
+		{
+			impl_ptr->background_thread->join();
+		}
+	}
+
+	client& client::Instance()
 	{
-		this->impl_ptr->close_connection_ = true;
+		static client instance;
+
+		return instance;
 	}
-	bool helper = this->impl_ptr->close_connection_;
-	lock.unlock();
 
-	return helper;
-}
-
-void client::init()
-{
-
-	impl_ptr->socket_.set_verify_mode(asio::ssl::verify_peer);
-	auto f = std::bind(&client::verify_certificate, this, std::placeholders::_1, std::placeholders::_2);
-	impl_ptr->socket_.set_verify_callback(f);
-}
-
-client& client::Instance()
-{
-	static client instance;
-
-	return instance; 
-}
-
-void client::initRemoteHostData(const std::string& host, const std::string& port, const std::string& certificate)
-{
-	this->impl_ptr->host_ = host;
-	this->impl_ptr->port_ = port;
-	this->impl_ptr->certificate_ = certificate;
-	impl_ptr->context_.load_verify_file(impl_ptr->certificate_);
-	asio::ip::tcp::resolver resolver(impl_ptr->io_service_);
-	asio::ip::tcp::resolver::query query(impl_ptr->host_, impl_ptr->port_);
-	impl_ptr->endpoint_iterator = resolver.resolve(query);
-}
-
-void client::set_host(const std::string& host)
-{
-	this->impl_ptr->host_ = host;
-}
-
-void client::set_port(const std::string& port)
-{
-	this->impl_ptr->port_ = port;
-}
-
-void client::set_certificate(const std::string& certificate)
-{
-	this->impl_ptr->certificate_ = certificate;
-}
-
-void client::setLostConnectionNotifier(const std::function<void(void)>& callback)
-{
-	impl_ptr->callback = callback;
-}
-
-void client::setLostConnectionNotifier(std::function<void(void)>&& callback)
-{
-	impl_ptr->callback = std::move(callback);
-}
-
-std::string client::license()
-{
-	if (!impl_ptr->license_is_set_)
+	void client::initRemoteHostData(const std::string& host, const std::string& port, const std::string& certificate)
 	{
-		std::string s = impl_ptr->future_.get();
-		return s;
-		
+		this->impl_ptr->host_ = host;
+		this->impl_ptr->port_ = port;
+		this->impl_ptr->certificate_ = certificate;
+		impl_ptr->context_.load_verify_file(impl_ptr->certificate_);
+		asio::ip::tcp::resolver resolver(impl_ptr->io_service_);
+		asio::ip::tcp::resolver::query query(impl_ptr->host_, impl_ptr->port_);
+		impl_ptr->endpoint_iterator = resolver.resolve(query);
 	}
-	
-	return impl_ptr->license_;
-};
 
-void client::request_license()
-{
-	try
+	void client::setLostConnectionNotifier(const std::function<void(void)>& callback)
 	{
-		this->connect(impl_ptr->endpoint_iterator);
-		impl_ptr->io_service_.run();
+		impl_ptr->callback = callback;
 	}
-	catch (std::exception& e)
+
+	void client::setLostConnectionNotifier(std::function<void(void)>&& callback)
 	{
-		std::cerr << "Exception: " << e.what() << "\n";
+		impl_ptr->callback = std::move(callback);
 	}
-}
 
-void client::get_license(){
+	std::string client::license()
+	{
+		if (!impl_ptr->license_is_set_)
+		{
+			std::string s = impl_ptr->future_.get();
+			return s;
 
-	impl_ptr->background_thread = std::make_unique<std::thread>(&client::request_license, this);
-}
+		}
 
-bool client::verify_certificate(bool preverified, asio::ssl::verify_context& ctx)
+		return impl_ptr->license_;
+	};
+
+	void client::request_license()
+	{
+		try
+		{
+			this->connect(impl_ptr->endpoint_iterator);
+			impl_ptr->io_service_.run();
+		}
+		catch (std::exception& e)
+		{
+			std::cerr << "Exception: " << e.what() << "\n";
+		}
+	}
+
+	void client::get_license(){
+
+		impl_ptr->background_thread = std::make_unique<std::thread>(&client::request_license, this);
+	}
+
+	bool client::verify_certificate(bool preverified, asio::ssl::verify_context& ctx)
 	{
 		// The verify callback can be used to check whether the certificate that is
 		// being presented is valid for the peer. For example, RFC 2818 describes
@@ -195,7 +142,7 @@ bool client::verify_certificate(bool preverified, asio::ssl::verify_context& ctx
 		return preverified;
 	}
 
-void client::connect(asio::ip::tcp::resolver::iterator& endpoint_iterator)
+	void client::connect(asio::ip::tcp::resolver::iterator& endpoint_iterator)
 	{
 		asio::async_connect(impl_ptr->socket_.lowest_layer(),
 			endpoint_iterator,
@@ -213,7 +160,7 @@ void client::connect(asio::ip::tcp::resolver::iterator& endpoint_iterator)
 		);
 	}
 
-void client::handle_handshake()
+	void client::handle_handshake()
 	{
 		impl_ptr->socket_.async_handshake(asio::ssl::stream_base::client,
 			[this](const std::error_code& error)
@@ -230,14 +177,14 @@ void client::handle_handshake()
 		);
 	}
 
-void client::handle_write()
+	void client::handle_write()
 	{
-		
+
 		if (this->impl_ptr->close_connection_)
 		{
 			return;
 		}
-		
+
 		std::string something = "getLicense";
 		impl_ptr->socket_.async_write_some(asio::buffer(impl_ptr->request_),
 			[this](std::error_code ec,
@@ -257,18 +204,18 @@ void client::handle_write()
 		);
 	}
 
-void client::handle_read()
-{
-	
-	if (this->impl_ptr->close_connection_)
+	void client::handle_read()
+	{
+
+		if (this->impl_ptr->close_connection_)
 		{
 
 			return;
 		}
 
-	impl_ptr->socket_.async_read_some(
+		impl_ptr->socket_.async_read_some(
 
-		asio::buffer(impl_ptr->reply_, max_length),
+			asio::buffer(impl_ptr->reply_, max_length),
 			[this](std::error_code ec, size_t bytes_transferred)
 		{
 			if (!ec)
@@ -276,7 +223,7 @@ void client::handle_read()
 				std::stringstream ss;
 				ss.write(impl_ptr->reply_, bytes_transferred);
 				std::string msg = ss.str();
-		
+
 				if (impl_ptr->license_.compare("Nothing") == 0)
 				{
 					impl_ptr->license_ = msg;
@@ -310,3 +257,5 @@ void client::handle_read()
 		);
 
 	}
+}
+
