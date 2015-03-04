@@ -11,13 +11,13 @@ namespace auth
 			this->host_ = "";
 			this->port_ = "";
 			this->certificate_ = "";
-			this->request_ = "getLicense";
+			this->request_ = "";
+			this->id_ = "0000";
 			this->license_ = "Nothing";
 			this->license_is_set_ = false;
 			this->close_connection_ = false;
 			this->background_thread = nullptr;
 			this->future_ = this->promise_.get_future();
-
 		}
 
 		asio::io_service io_service_;
@@ -31,6 +31,7 @@ namespace auth
 		std::string certificate_;
 		std::string host_;
 		std::string port_;
+		std::string id_;
 		std::unique_ptr<std::thread> background_thread;
 		std::function<void(void)> callback = [](){};
 		asio::ip::tcp::resolver::iterator endpoint_iterator;
@@ -80,6 +81,11 @@ namespace auth
 		impl_ptr->endpoint_iterator = resolver.resolve(query);
 	}
 
+	void client::set_my_id(const std::string& id)
+	{
+		this->impl_ptr->id_= id;
+	}
+
 	void client::setLostConnectionNotifier(const std::function<void(void)>& callback)
 	{
 		impl_ptr->callback = callback;
@@ -106,6 +112,14 @@ namespace auth
 	{
 		try
 		{
+			std::string result = "command=request_license id=";
+			result += this->impl_ptr->id_;
+			std::stringstream buff;
+			buff << "POST HTTP/1.1\r\n";
+			buff << "Host: localhost:4242\r\n";
+			buff << "Content-Length: " << result.length() << "\r\n\r\n";
+			buff << result;
+			this->impl_ptr->request_ = buff.str();
 			this->connect(impl_ptr->endpoint_iterator);
 			impl_ptr->io_service_.run();
 		}
@@ -181,7 +195,6 @@ namespace auth
 			return;
 		}
 
-		std::string something = "getLicense";
 		impl_ptr->socket_.async_write_some(asio::buffer(impl_ptr->request_),
 			[this](std::error_code ec,
 			size_t bytes_transferred)
@@ -219,7 +232,8 @@ namespace auth
 				std::stringstream ss;
 				ss.write(impl_ptr->reply_, bytes_transferred);
 				std::string msg = ss.str();
-
+				
+				this->extract_license(msg);
 				if (impl_ptr->license_.compare("Nothing") == 0)
 				{
 					impl_ptr->license_ = msg;
@@ -232,12 +246,12 @@ namespace auth
 					{
 						if (impl_ptr->license_.compare(msg) != 0)
 						{
-							throw "Different license granted from server...";
+							throw std::exception("Different license granted from server...");
 						}
 					}
-					catch (std::string e)
+					catch (std::exception& e)
 					{
-						std::cout << "\nAn exception occurred. " << e << "\n";
+						std::cout << "\nAn exception occurred. " << e.what() << "\n";
 					}
 				}
 				std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -252,6 +266,15 @@ namespace auth
 		}
 		);
 
+	}
+
+	void client::extract_license(std::string& reply)
+	{
+		size_t found_body = reply.find("\r\n\r\n");
+		if (found_body != std::string::npos)
+		{
+			reply = reply.substr(found_body + 4);
+		}
 	}
 }
 
