@@ -17,7 +17,7 @@ cmake_minimum_required(VERSION 2.6)
 OPTION(BUILD_SERVER "Build server lib" ON)
 OPTION(BUILD_CLIENT "Build Client lib" ON)
 OPTION(BUILD_UTIL "Build util lib" ON)
-
+OPTION(BUILD_SQLITE_INTERFACE "Build sqliteInterface lib" ON)
 OPTION(BUILD_UNIT_TESTS "Build unit tests" OFF)
 
 #
@@ -38,6 +38,10 @@ endif ()
 
 if(BUILD_UNIT_TESTS)
   add_subdirectory(tests)
+endif()
+
+if(BUILD_SQLITE_INTERFACE)
+  add_subdirectory(sqliteInterface)
 endif()
 
 #doxygen configuration based on the method found  @ https://mementocodex.wordpress.com/2013/01/19/how-to-generate-code-documentation-with-doxygen-and-cmake-a-slightly-improved-approach/
