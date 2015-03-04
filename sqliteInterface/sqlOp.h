@@ -18,7 +18,7 @@ private:
   std::vector<std::vector<std::string>> query(char* query);
 protected:
   SqlOp(){};
-  
+  ~SqlOp(){};
 public:
   std::string tableN;
   bool openDatabase(std::string databse_name);
@@ -29,7 +29,7 @@ public:
   bool displayTable(std::string table_name);
   bool deleteTable(std::string table_name);
   bool deleteTableContent(std::string table_name);
-  bool getUnusedLicences(std::string  user_name);
+  std::string getUnusedLicences(std::string  user_name);
 
   void createTablesAndDatabase();
 

@@ -15,11 +15,6 @@ include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${OPENSSL_INCLUDE_DIR} ${ASIO_INCLUDE_DIR})
 SET ( SOURCE_FILES_SERVER
 "${CMAKE_CURRENT_SOURCE_DIR}/server.cpp"
-"${CMAKE_CURRENT_SOURCE_DIR}/Connection.hpp"
-"${CMAKE_CURRENT_SOURCE_DIR}/Connection.cpp"
-"${CMAKE_CURRENT_SOURCE_DIR}/DbConnection.h"
-"${CMAKE_CURRENT_SOURCE_DIR}/DbConnection.cpp"
-
 )
 
 
@@ -33,11 +28,13 @@ IF(WIN32)
     ws2_32.lib
     winmm.lib
     config.lib
+    sqliteInterface.lib
     ${LINK_LIBS_SERVER}
     )
 ELSEIF(UNIX AND NOT APPLE)
   SET(LINK_LIBS_SERVER
-    config.lib
+    config
+    sqliteInterface
     ${X11_X11_LIB}
     ${X11_Xrandr_LIB}
     ${LINK_LIBS_SERVER}

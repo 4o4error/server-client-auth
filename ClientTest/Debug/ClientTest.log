@@ -1,0 +1,12 @@
+﻿Build started 2/27/2015 12:42:39 PM.
+     1>Project "C:\Users\Krull\Documents\GitHub\server-client-auth\ClientTest\ClientTest.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(357,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+     1>Link:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Krull\Documents\GitHub\server-client-auth\build\Debug\ClientTest.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\Visual Leak Detector\lib\Win32" D:\openssl\build\lib\ssleay32.lib D:\openssl\build\lib\libeay32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Krull\Documents\GitHub\server-client-auth\build\Debug\ClientTest.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Krull\Documents\GitHub\server-client-auth\build\Debug\ClientTest.lib" /MACHINE:X86 Debug\Main.obj
+         "C:\Users\Krull\Documents\GitHub\server-client-auth\build\Debug\client.lib"
+     1>LINK : fatal error LNK1168: cannot open C:\Users\Krull\Documents\GitHub\server-client-auth\build\Debug\ClientTest.exe for writing
+     1>Done Building Project "C:\Users\Krull\Documents\GitHub\server-client-auth\ClientTest\ClientTest.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.32

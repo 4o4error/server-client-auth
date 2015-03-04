@@ -216,16 +216,16 @@ std::vector<std::vector<std::string> > SqlOp::query(char* query)
   return results;
 }
 
-bool SqlOp::getUnusedLicences(std::string user_name){
+std::string  SqlOp::getUnusedLicences(std::string user_name){
 
   std::vector<std::vector<std::string>> results = query("SELECT * FROM licenses WHERE inUse LIKE '0' LIMIT 1 ");
   if (results.empty()){
     std::cout << "there are no unused licences";
-    return true;
+    return "-1";
   }
   else{
     setLicence("licenses", results[0][1].c_str(), user_name);
-    return false;
+    return results[0][1];
   }
   
 }
