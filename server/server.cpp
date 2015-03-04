@@ -84,11 +84,21 @@ private:
   }
   void processPost(std::string& msg){
     size_t foundMsgBody = msg.find("\r\n\r\n");
-    msg = msg.substr(foundMsgBody, std::string::npos);
+    if (foundMsgBody != std::string::npos)
+    {
+      msg = msg.substr(foundMsgBody, std::string::npos);
+    }
+    
   }
 
   void processGet(std::string msg){
   
+  }
+
+  void buildPostResponse(std::string status){
+    std::string header = "HTTP / 1.1 "+status+"\r\nServer: auth-server\r\n Content - type: text / html \r\n\r\n";
+    httpresponse = header;
+    httpresponse.append(license);
   }
   inline std::string trim(const std::string& s) {
     if (s.length() == 0)
@@ -108,21 +118,21 @@ private:
       std::chrono::milliseconds diff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastConnectionTime);
       auto diffInLong = diff.count();
       // check timeout period 
-      if (diffInLong < std::chrono::milliseconds(500).count()){
+      if (diffInLong < std::chrono::milliseconds(5000).count()){
         //std::cout << "still under timeout period" << std::endl;
         if (wroteStuff){
           wroteStuff = false;
           std::error_code ec;
           size_t bytesTransfered = socket_.read_some(asio::buffer(data_, max_length), ec);
-          if (bytesTransfered > 0){
+          if (bytesTransfered > 0)
+          {
             lastConnectionTime = std::chrono::steady_clock::now();
             std::stringstream ss;
             ss.write(data_, bytesTransfered);
             std::string msg = ss.str();
             if (msg.substr(0, 4) == "POST"){
               processPost(msg);
-              std::string header = "HTTP / 1.1 200 OK \r\nServer: auth-server\r\n Content - type: text / html \r\n\r\n";
-              httpresponse = header;
+              
               std::string command = parseMessageFor(msg, "command");
               std::string id = parseMessageFor(msg, "id");
               std::cout << "command is " << command << std::endl << "id is " << id << std::endl;
@@ -130,9 +140,9 @@ private:
                 if (license.compare("") == 0)
                 {
                   license = Singleton::getInstance()->getUnusedLicences(msg);
-                  httpresponse = header.append(license);
                 }
               }
+              buildPostResponse("200 OK");
             }
             else
             {
@@ -152,7 +162,7 @@ private:
           std::error_code ec;
           std::string header = "HTTP / 1.0 200 OK \r\n Content - type: text / html \r\n\r\n";
           
-          std::size_t bytes_transfered = socket_.write_some(asio::buffer(httpresponse), ec);
+          std::size_t bytes_transfered = socket_.write_some(asio::buffer(license), ec);
           if (!ec){
             wroteStuff = true;
             std::cout << "wrote " << httpresponse << std::endl;
