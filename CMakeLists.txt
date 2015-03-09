@@ -80,5 +80,9 @@ IF(BUILD_DOCUMENTATION)
 ENDIF()
 
 IF(UNIX AND NOT APPLE)
-list( APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+ADD_DEFINITIONS(
+    -std=c++11 # Or -std=c++0x
+    # Other flags
+)
 ENDIF()
