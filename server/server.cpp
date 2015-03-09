@@ -6,7 +6,7 @@
 #include <utility>
 #include <thread>
 #include <asio.hpp>
-#include <asio\ssl.hpp>
+#include <asio/ssl.hpp>
 #include <chrono>
 #include <mutex>
 #include <set>
@@ -16,7 +16,7 @@
 const static std::string dbName = "Database";
 
 //sqllite db interface
-#include "sqliteInterface\Singleton.h"
+#include "sqliteInterface/Singleton.h"
 
 using asio::ip::tcp;
 
@@ -262,7 +262,7 @@ public:
             clearingVec.push_back(*it);
           }
         }
-        for each (auto var in clearingVec)
+        for  (auto var : clearingVec)
         {
           std::lock_guard<std::mutex> lg(mutex);
           sessions.erase((var));
