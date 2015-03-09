@@ -1,8 +1,4 @@
 //only for testing 
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -17,7 +13,6 @@
 #include <vector>
 
 #include "include\sca_platformtype.h"
-#include "include\sca_build_opts.h"
 const static std::string dbName = "Database";
 
 //sqllite db interface
@@ -350,7 +345,7 @@ int main()
     asio::io_service io_service;
 
     server s(io_service, 4242);
-    _CrtDumpMemoryLeaks();
+
     io_service.run();
     
   }

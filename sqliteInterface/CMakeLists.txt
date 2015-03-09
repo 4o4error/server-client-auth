@@ -24,7 +24,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/sqlOp.cpp
 SOURCE_GROUP("sqliteInterface" FILES
 ${SOURCE_FILES_SQLITE_INTERFACE}
 )
-include_directories("${PROJECT_SOURCE_DIR}/include")
+include_directories("${PROJECT_SOURCE_DIR}")
 add_library(sqliteInterface SHARED ${SOURCE_FILES_SQLITE_INTERFACE})
 
 # ---------------- Link Libraries section --------------------

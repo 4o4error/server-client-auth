@@ -10,7 +10,7 @@
 #include <vector>
 
 //build opts
-#include "sca_platformtype.h"
+#include "include\sca_platformtype.h"
 class SCA_EXPORT_SYMBOL SqlOp{
   friend class Singleton;
 private:

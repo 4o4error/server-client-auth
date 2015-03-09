@@ -2,7 +2,7 @@
 #define CONFIG_EXCEPTION_H_
 
 #include <exception>
-#include "sca_platformtype.h"
+#include "include\sca_platformtype.h"
 namespace config{
   class SCA_EXPORT_SYMBOL ConfigException : public std::exception{
   protected:

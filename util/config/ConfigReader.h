@@ -4,7 +4,7 @@
 #include <map>
 #include <sstream>
 #include <fstream>
-#include "sca_platformtype.h"
+#include "include\sca_platformtype.h"
 
 namespace config{
   template <typename ParseRule>
