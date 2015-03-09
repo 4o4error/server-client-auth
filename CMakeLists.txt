@@ -81,5 +81,5 @@ ENDIF()
 
 IF(UNIX AND NOT APPLE)
 add_definitions(-DCMAKE_CXX_COMPILER=g++)
-SET(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs")
 ENDIF()
