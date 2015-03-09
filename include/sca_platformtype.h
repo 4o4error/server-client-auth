@@ -1,12 +1,6 @@
 #ifndef SCA_PLATFORM_TYPE_H_
 #define SCA_PLATFORM_TYPE_H_
 
-#ifdef __cplusplus
-#define EXTERNC extern "C"
-#else
-#define EXTERNC
-#endif
-
 //
 // Define the possible platform types
 //
@@ -54,10 +48,10 @@
  #endif 
 #elif SCA_PLATFORM_TYPE == SCA_PLATFORM_TYPE_LINUX
 #if __GNUC__ >= 4
-#define SCA_EXPORT_SYMBOL          EXTERNC __attribute__ ((visibility("default")))
+#define SCA_EXPORT_SYMBOL          extern "C" __attribute__ ((visibility("default")))
 #define SCA_PRIVATE_SYMBOL       __attribute__((visibility("hidden")))
 #else
-#define SCA_EXPORT_SYMBOL          EXTERNC
+#define SCA_EXPORT_SYMBOL          extern "C"
 #define SCA_EXPORT_SYMBOL
 #endif
 #endif
