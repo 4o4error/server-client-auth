@@ -12,6 +12,7 @@ find_package(OpenSSL REQUIRED)
 SET(ASIO_INCLUDE_DIR CACHE "ASIO_INCLUDE_DIR?" FORCE)
 link_directories(${PROJECT_SOURCE_DIR}/build/)
 include_directories(${PROJECT_SOURCE_DIR})
+include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories(${OPENSSL_INCLUDE_DIR} ${ASIO_INCLUDE_DIR})
 SET ( SOURCE_FILES_SERVER
 "${CMAKE_CURRENT_SOURCE_DIR}/server.cpp"

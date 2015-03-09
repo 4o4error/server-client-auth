@@ -2,7 +2,7 @@
 #define ICONFIGCLASS_H_
 #include <map>
 #include <string>
-#include "include\sca_platformtype.h"
+#include "sca_platformtype.h"
 namespace config{
   class SCA_EXPORT_SYMBOL IConfigClass{
   public:

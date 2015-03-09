@@ -4,7 +4,7 @@
 #include "IConfigClass.h"
 #include <iostream>
 
-#include "include\sca_platformtype.h"
+#include "sca_platformtype.h"
 
 namespace config{
 

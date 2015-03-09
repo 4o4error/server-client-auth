@@ -18,7 +18,7 @@ SET (SOURCE_FILES_CONFIG
  "${CMAKE_CURRENT_SOURCE_DIR}/ConfigReader.cpp"
  "${CMAKE_CURRENT_SOURCE_DIR}/ConfigFactory.h")
  
- include_directories("${PROJECT_SOURCE_DIR}")
+ include_directories("${PROJECT_SOURCE_DIR}/include")
  
 SOURCE_GROUP("config" FILES
   ${SOURCE_FILES_CONFIG}

@@ -12,7 +12,7 @@
 #include <set>
 #include <vector>
 
-#include "include\sca_platformtype.h"
+#include "sca_platformtype.h"
 const static std::string dbName = "Database";
 
 //sqllite db interface
