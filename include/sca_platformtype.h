@@ -46,7 +46,7 @@
     #endif
  #endif 
 #elif SCA_PLATFORM_TYPE == SCA_PLATFORM_TYPE_LINUX
-    #define SCA_READER_EXPORT_SYMBOL __attribute__((visibility("default")))
+    #define SCA_READER_EXPORT_SYMBOL extern "C" __attribute__((visibility("default")))
     #define SCA_READER_EXPIMP_TEMPLATE
 #endif
 
