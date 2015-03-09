@@ -24,7 +24,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/sqlOp.cpp
 SOURCE_GROUP("sqliteInterface" FILES
 ${SOURCE_FILES_SQLITE_INTERFACE}
 )
-
+include_directories("${PROJECT_SOURCE_DIR}/include")
 add_library(sqliteInterface SHARED ${SOURCE_FILES_SQLITE_INTERFACE})
 
 # ---------------- Link Libraries section --------------------
@@ -46,7 +46,7 @@ ELSEIF(UNIX AND NOT APPLE)
     )
 ENDIF()
 #-D ca sa ia ca si definitie
-ADD_DEFINITIONS(-DSQLDLL_EXPORTS)
+ADD_DEFINITIONS(-DSCA_EXP)
 ADD_DEFINITIONS(-DUNICODE -D_UNICODE)
 
 

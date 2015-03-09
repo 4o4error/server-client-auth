@@ -2,9 +2,9 @@
 #define CONFIG_EXCEPTION_H_
 
 #include <exception>
-#include "config_reader_build_opts.h"
+#include "sca_platformtype.h"
 namespace config{
-  class CONFIG_READER_EXPORT_SYMBOL ConfigException : public std::exception{
+  class SCA_EXPORT_SYMBOL ConfigException : public std::exception{
   protected:
     const char* exception_;
     ConfigException(const char* exception);

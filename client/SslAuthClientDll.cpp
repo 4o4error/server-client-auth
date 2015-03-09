@@ -66,7 +66,7 @@ namespace auth
 
 	client* client::Instance()
 	{
-		static client* instance = new client();
+	  client* instance = new client();
 		return instance;
 	}
 

@@ -1,10 +1,6 @@
 #pragma once;
 
-#ifdef SSLAUTHCIENTDLL_EXPORTS
-#define AUTHCLIENTDLL_API __declspec(dllexport) 
-#else
-#define AUTHCLIENTDLL_API __declspec(dllimport) 
-#endif
+
 
 #include <cstdlib>
 #include <iostream>
@@ -16,11 +12,14 @@
 #include <chrono>
 #include <future>
 
+//build opts
+#include "sca_platformtype.h"
+
 enum { max_length = 1024 };
 
 namespace auth
 {
-	class AUTHCLIENTDLL_API client
+  class SCA_EXPORT_SYMBOL client
 	{
 	public:
 

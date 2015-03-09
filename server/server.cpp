@@ -1,3 +1,8 @@
+//only for testing 
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -11,7 +16,9 @@
 #include <set>
 #include <vector>
 
-const std::string dbName ="Database"; 
+#include "include\sca_platformtype.h"
+#include "include\sca_build_opts.h"
+const static std::string dbName = "Database";
 
 //sqllite db interface
 #include "sqliteInterface\Singleton.h"
@@ -26,23 +33,20 @@ public:
   session(asio::io_service& io_service, asio::ssl::context& context)
     : socket_(io_service, context)
   {
-    Singleton::getInstance()->openDatabase(dbName);
-    
+ 
   }
   bool readyToShutDown(){
     return shutdownSession;
   }
   void start() {
-    std::cout << "shaking hands" << std::endl;
-    auto self(shared_from_this());
-    socket_.async_handshake(asio::ssl::stream_base::server, [this,self](std::error_code ec){
-      if (!ec){
-        do_work();
-      }
-      else{
-        std::cout << ec.message() << std::endl;
-      }
-    });
+    std::error_code ec;
+    socket_.handshake(asio::ssl::stream_base::server, ec);
+    if (!ec){
+      do_work();
+    }
+    else{
+      std::cout << ec.message() << std::endl;
+    }
   }
   ssl_socket::lowest_layer_type& socket()
   {
@@ -51,9 +55,9 @@ public:
   ~session(){
     std::cout << "destroying session " << std::endl;
     Singleton::getInstance()->resetLicence("licenses", license);
-    std::error_code ec; 
+    std::error_code ec;
     socket_.lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
-    
+
   }
 private:
   void do_work(){
@@ -69,13 +73,13 @@ private:
     if (found != std::string::npos)
     {
       // posiotion found + command size + '='
-      size_t separator = msg.find(" ",0);
-      std::string result = msg.substr(found, separator-3);
-     // result = msg.substr(result.find("=")+1, std::string::npos);
-      result = result.substr(s.size()+1,std::string::npos);
+      size_t separator = msg.find(" ", 0);
+      std::string result = msg.substr(found, separator - 3);
+      // result = msg.substr(result.find("=")+1, std::string::npos);
+      result = result.substr(s.size() + 1, std::string::npos);
       result = trim(result);
       return result;
-      
+
     }
     else
     {
@@ -88,15 +92,15 @@ private:
     {
       msg = msg.substr(foundMsgBody, std::string::npos);
     }
-    
+
   }
 
   void processGet(std::string msg){
-  
+
   }
 
   void buildPostResponse(std::string status){
-    std::string header = "HTTP / 1.1 "+status+"\r\nServer: auth-server\r\n Content - type: text / html \r\n\r\n";
+    std::string header = "HTTP / 1.1 " + status + "\r\nServer: auth-server\r\n Content - type: text / html \r\n\r\n";
     httpresponse = header;
     httpresponse.append(license);
   }
@@ -110,6 +114,7 @@ private:
     return std::string(s, b, e - b + 1);
   }
   void do_readwrite(){
+    bool wasntGetRequest = true;
     auto lastConnectionTime = std::chrono::steady_clock::now();
     while (!shutdownSession){
 
@@ -118,7 +123,7 @@ private:
       std::chrono::milliseconds diff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastConnectionTime);
       auto diffInLong = diff.count();
       // check timeout period 
-      if (diffInLong < std::chrono::milliseconds(5000).count()){
+      if (diffInLong < std::chrono::milliseconds(5000).count() && wasntGetRequest){
         //std::cout << "still under timeout period" << std::endl;
         if (wroteStuff){
           wroteStuff = false;
@@ -132,13 +137,14 @@ private:
             std::string msg = ss.str();
             if (msg.substr(0, 4) == "POST"){
               processPost(msg);
-              
+
               std::string command = parseMessageFor(msg, "command");
               std::string id = parseMessageFor(msg, "id");
               std::cout << "command is " << command << std::endl << "id is " << id << std::endl;
               if (command.compare("request_license") == 0){
                 if (license.compare("") == 0)
                 {
+                  std::lock_guard<std::mutex> lg(mtx);
                   license = Singleton::getInstance()->getUnusedLicences(msg);
                 }
               }
@@ -149,11 +155,12 @@ private:
               processGet(msg);
               std::string header = "HTTP / 1.1 405 Method Not Allowed \r\n Content - type: text / html \r\n\r\n";
               httpresponse = header;
+              wasntGetRequest = false;
             }
-          
+
             readStuff = true;
             //TODO Process stuff 
-           
+
           }
         }
         if (readStuff)
@@ -161,7 +168,7 @@ private:
           readStuff = false;
           std::error_code ec;
           std::string header = "HTTP / 1.0 200 OK \r\n Content - type: text / html \r\n\r\n";
-          
+
           std::size_t bytes_transfered = socket_.write_some(asio::buffer(license), ec);
           if (!ec){
             wroteStuff = true;
@@ -176,11 +183,11 @@ private:
       }
     }
   }
- void prepareToBeDestroyed(){
-   readWriteThread.detach();
-   shutdownSession = true;
-  // removeThis(this);
- }
+  void prepareToBeDestroyed(){
+    readWriteThread.detach();
+    shutdownSession = true;
+    // removeThis(this);
+  }
   void do_read() {
     auto self(shared_from_this());
     socket_.async_read_some(
@@ -213,9 +220,10 @@ private:
   }
   std::string httpresponse = "";
   std::string license = "";
-  bool wroteStuff =true;
+  bool wroteStuff = true;
   bool readStuff = false;
-  bool shutdownSession =false;
+  bool shutdownSession = false;
+  std::mutex mtx;
   std::thread readWriteThread;
   ssl_socket socket_;
   enum { max_length = 1024 };
@@ -226,58 +234,58 @@ private:
 //
 
 class ConnectionManager{
-    std::mutex mutex;
-    std::set<std::shared_ptr<session>> sessions;
-    std::thread checkIfWorkingThread;
-  public:
-    ConnectionManager(ConnectionManager&) = delete;
-    ConnectionManager& operator=(ConnectionManager&) = delete;
-    ConnectionManager(){
-      sessions.clear(); 
-      checkIfWorkingThread = std::thread(&ConnectionManager::checkIfWorking, this);
-    }
-    ~ConnectionManager(){
-      checkIfWorkingThread.join();
-    }
-    void addSession(std::shared_ptr<session> session){
-      std::lock_guard<std::mutex> lg(mutex);
-      sessions.insert(session);
-    }
-       
-    void checkIfWorking(){
-      std::vector<std::shared_ptr<session>> clearingVec;
-      while (true)
+  std::mutex mutex;
+  std::set<std::shared_ptr<session>> sessions;
+  std::thread checkIfWorkingThread;
+public:
+  ConnectionManager(ConnectionManager&) = delete;
+  ConnectionManager& operator=(ConnectionManager&) = delete;
+  ConnectionManager(){
+    sessions.clear();
+    checkIfWorkingThread = std::thread(&ConnectionManager::checkIfWorking, this);
+  }
+  ~ConnectionManager(){
+    checkIfWorkingThread.join();
+  }
+  void addSession(std::shared_ptr<session> session){
+    std::lock_guard<std::mutex> lg(mutex);
+    sessions.insert(session);
+  }
+
+  void checkIfWorking(){
+    std::vector<std::shared_ptr<session>> clearingVec;
+    while (true)
+    {
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+      if (!sessions.empty())
       {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        if (!sessions.empty())
+        for (std::set <std::shared_ptr<session>>::iterator it = sessions.begin(); it != sessions.end(); ++it)
         {
-          for (std::set <std::shared_ptr<session>>::iterator it = sessions.begin(); it != sessions.end(); ++it)
-          {
-            if (it->get()->readyToShutDown())
-            {
-              std::lock_guard<std::mutex> lg(mutex);
-              clearingVec.push_back(*it); 
-            }
-          }
-          for each (auto var in clearingVec)
+          if (it->get()->readyToShutDown())
           {
             std::lock_guard<std::mutex> lg(mutex);
-            sessions.erase((var));
+            clearingVec.push_back(*it);
           }
-          clearingVec.clear();
         }
+        for each (auto var in clearingVec)
+        {
+          std::lock_guard<std::mutex> lg(mutex);
+          sessions.erase((var));
+        }
+        clearingVec.clear();
       }
     }
-  };
-  
-  class ConnectionManagerFactory{
-  public:
-    static ConnectionManager* getInstance(){
-      static ConnectionManager Instance;
-      return &Instance;
-    }
-  
-  };
+  }
+};
+
+class ConnectionManagerFactory{
+public:
+  static ConnectionManager* getInstance(){
+    static ConnectionManager Instance;
+    return &Instance;
+  }
+
+};
 
 
 class server {
@@ -297,14 +305,15 @@ public:
     context_.use_certificate_chain_file("cacert.pem");
     context_.use_private_key_file("private.pem", asio::ssl::context::pem);
     context_.use_tmp_dh_file("dh512.pem");
-    
+
     //create database; 
     Singleton::getInstance()->createTablesAndDatabase();
-    
+
     Singleton::getInstance()->resetLicence("licenses", "alex");
     Singleton::getInstance()->resetLicence("licenses", "vlad");
     Singleton::getInstance()->resetLicence("licenses", "adi");
     Singleton::getInstance()->displayTable("licenses");
+    Singleton::getInstance()->openDatabase(dbName);
     do_accept();
   }
 
@@ -314,41 +323,42 @@ private:
     return "test";
   }
   void do_accept() {
-    std::shared_ptr<session> shared_session = std::make_shared<session>(io_service_, context_);
-    acceptor_.async_accept(
-      shared_session->socket(),
-      [this, shared_session](std::error_code ec)
-    {
+    while (true){
+      std::shared_ptr<session> shared_session = std::make_shared<session>(io_service_, context_);
+      std::error_code ec;
+      acceptor_.accept(shared_session->socket(), ec);
       if (!ec) {
         shared_session->start();  // according to stack o. it should do the same thing
         ConnectionManagerFactory::getInstance()->addSession(shared_session);
       }
+      std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
-      do_accept();
-    });
+    }
   }
- 
- 
+
+ // std::shared_ptr<session> shared_session;
   tcp::acceptor acceptor_;
   tcp::socket socket_;
   asio::io_service& io_service_;
   asio::ssl::context context_;
 };
 
-
-int main(int argc, char* argv[]) {
+int main()
+{
   try {
-   
+
     asio::io_service io_service;
 
     server s(io_service, 4242);
-
+    _CrtDumpMemoryLeaks();
     io_service.run();
-
+    
   }
   catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << "\n";
   }
+
+
 
   return 0;
 }

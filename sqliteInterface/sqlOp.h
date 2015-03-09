@@ -5,10 +5,12 @@
 #include <ios>
 #include <iostream>
 #include "sqlite3.h"
-#include "SqlDll.h"
+
 #include <vector>
 
-class SQLDLL_API SqlOp{
+//build opts
+#include "sca_platformtype.h"
+class SCA_EXPORT_SYMBOL SqlOp{
   friend class Singleton;
 private:
   int unique;
