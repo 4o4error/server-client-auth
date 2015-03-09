@@ -2,7 +2,7 @@
 #define SCA_PLATFORM_TYPE_H_
 
 #ifdef __cplusplus
-#define EXTERNC         extern "C"
+#define EXTERNC extern "C"
 #else
 #define EXTERNC
 #endif
