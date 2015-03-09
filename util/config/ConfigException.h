@@ -10,7 +10,7 @@ namespace config{
     ConfigException(const char* exception);
   public:
     ConfigException(){}
-    const char* what() const override;
+    const char* what() const throw() override;
   };
 }
 
