@@ -80,5 +80,6 @@ IF(BUILD_DOCUMENTATION)
 ENDIF()
 
 IF(UNIX AND NOT APPLE)
-add_definitions(-DCMAKE_CXX_COMPILER=g++)
+add_definitions(-DCMAKE_CXX_COMPILER=g++ 
+                -Dstd=c++11)
 ENDIF()
