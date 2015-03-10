@@ -10,9 +10,10 @@ private:
     
   }
 public:
-  // always provide constructors/ destructors 
-  Singleton(Singleton& const other) = delete;
-  Singleton& operator=(Singleton& const other) = delete;
+  // copying may cause unnintended 
+  // instance copies
+  Singleton(const Singleton& other) = delete;
+  Singleton& operator=(const Singleton& other) = delete;
   static SqlOp& Singleton::getInstance()
   {
     static SqlOp single;
