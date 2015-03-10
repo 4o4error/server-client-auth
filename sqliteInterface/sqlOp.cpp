@@ -3,7 +3,20 @@
 bool SqlOp::openDatabase(std::string database_name)
 {
   // Open Database
-  std::cout << "Opening "<<database_name.c_str()<< std::endl;
+  try
+  {
+    if (sqlite3_open(database_name.c_str(), &db) == SQLITE_OK)
+      return true;
+
+    return false;
+  }
+  catch (std::string e)
+  {
+      std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
+        return false;
+   }
+
+  /*std::cout << "Opening "<<database_name.c_str()<< std::endl;
 
   rc = sqlite3_open(database_name.c_str(), &db);
   if (rc)
@@ -16,7 +29,7 @@ bool SqlOp::openDatabase(std::string database_name)
   {
     std::cout << "Opened "<<database_name.c_str() << std::endl << std::endl;
     return true;
-  }
+  }*/
 }
 
 bool SqlOp::setLicence(std::string table_name, std::string licence, std::string user_name){
