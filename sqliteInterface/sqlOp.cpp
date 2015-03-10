@@ -215,7 +215,6 @@ std::vector<std::vector<std::string> > SqlOp::query(char* query)
   if (error != "not an error") std::cout << query << " " << error.c_str() << std::endl;
 
   delete[] query;
-  delete[] statement;
   return results;
 }
 
