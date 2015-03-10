@@ -208,11 +208,14 @@ std::vector<std::vector<std::string> > SqlOp::query(char* query)
         break;
       }
     }
-
+    
     sqlite3_finalize(statement);
   }
   std::string error = sqlite3_errmsg(db);
   if (error != "not an error") std::cout << query << " " << error.c_str() << std::endl;
+
+  delete[] query;
+  delete[] statement;
   return results;
 }
 
