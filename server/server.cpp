@@ -49,7 +49,7 @@ public:
   }
   ~session(){
     std::cout << "destroying session " << std::endl;
-    Singleton::getInstance()->resetLicence("licenses", license);
+    Singleton::getInstance().resetLicence("licenses", license);
     std::error_code ec;
     socket_.lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
 
@@ -302,13 +302,13 @@ public:
     context_.use_tmp_dh_file("dh512.pem");
 
     //create database; 
-    Singleton::getInstance()->createTablesAndDatabase();
+    Singleton::getInstance().createTablesAndDatabase();
 
-    Singleton::getInstance()->resetLicence("licenses", "alex");
-    Singleton::getInstance()->resetLicence("licenses", "vlad");
-    Singleton::getInstance()->resetLicence("licenses", "adi");
-    Singleton::getInstance()->displayTable("licenses");
-    Singleton::getInstance()->openDatabase(dbName);
+    Singleton::getInstance().resetLicence("licenses", "alex");
+    Singleton::getInstance().resetLicence("licenses", "vlad");
+    Singleton::getInstance().resetLicence("licenses", "adi");
+    Singleton::getInstance().displayTable("licenses");
+    Singleton::getInstance().>openDatabase(dbName);
     do_accept();
   }
 

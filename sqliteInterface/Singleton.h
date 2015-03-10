@@ -5,23 +5,17 @@
 class Singleton
 {
 private:
-  static bool instanceFlag;
-  
-  Singleton()
+   Singleton()
   {
     
   }
 public:
-
-  void method();
-  ~Singleton()
-  {
-    instanceFlag = false;
-  }
-  static SqlOp* Singleton::getInstance()
+  // always provide constructors/ destructors 
+  Singleton(Singleton& const other) = delete;
+  Singleton& operator=(Singleton& const other) = delete;
+  static SqlOp& Singleton::getInstance()
   {
     static SqlOp single;
-    return &single;
-  
+    return single;
   }
 };
