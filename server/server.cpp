@@ -312,7 +312,7 @@ public:
     do_accept();
   }
   ~server(){
-    Singleton::getInstance().closeDatabase(dbName);
+    Singleton::getInstance().closeDatabase();
   };
 
 private:

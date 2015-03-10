@@ -188,10 +188,10 @@ bool SqlOp::displayTable(std::string table_name)
     sqlite3_free_table(results);
     return true;
   }
-bool SqlOp::closeDatabase(std::string dbName)
+bool SqlOp::closeDatabase()
   {
     // Close Database
-  sqlite3_close(dbName);
+  sqlite3_close(db);
   return true;
   }
 std::vector<std::vector<std::string> > SqlOp::query(char* query)

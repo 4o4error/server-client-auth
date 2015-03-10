@@ -36,6 +36,6 @@ public:
 
   void createTablesAndDatabase();
 
-  bool closeDatabase(std::string dbName);
+  bool closeDatabase();
 };
 
