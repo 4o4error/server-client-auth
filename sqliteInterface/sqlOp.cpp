@@ -3,7 +3,13 @@
 bool SqlOp::openDatabase(std::string database_name)
 {
   // Open Database
-  std::cout << "Opening "<<database_name.c_str()<< std::endl;
+
+  if(sqlite3_open(database_name.c_str(), &db) == SQLITE_OK)
+    return true;
+
+  return false;
+
+  /*std::cout << "Opening "<<database_name.c_str()<< std::endl;
 
   rc = sqlite3_open(database_name.c_str(), &db);
   if (rc)
@@ -16,7 +22,7 @@ bool SqlOp::openDatabase(std::string database_name)
   {
     std::cout << "Opened "<<database_name.c_str() << std::endl << std::endl;
     return true;
-  }
+  }*/
 }
 
 bool SqlOp::setLicence(std::string table_name, std::string licence, std::string user_name){
@@ -178,9 +184,7 @@ bool SqlOp::displayTable(std::string table_name)
 bool SqlOp::closeDatabase()
   {
     // Close Database
-  std::cout << "Closing MyDb.db ..." << std::endl;
   sqlite3_close(db);
-  std::cout << "Closed MyDb.db" << std::endl << std::endl;
   return true;
   }
 std::vector<std::vector<std::string> > SqlOp::query(char* query)
@@ -208,13 +212,12 @@ std::vector<std::vector<std::string> > SqlOp::query(char* query)
         break;
       }
     }
-    
+    sqlite3_step(statement);
     sqlite3_finalize(statement);
   }
-  std::string error = sqlite3_errmsg(db);
-  if (error != "not an error") std::cout << query << " " << error.c_str() << std::endl;
+  //std::string error = sqlite3_errmsg(db);
+  //if (error != "not an error") std::cout << query << " " << error.c_str() << std::endl;
 
-  delete[] query;
   return results;
 }
 
@@ -235,7 +238,6 @@ std::string  SqlOp::getUnusedLicences(std::string user_name){
 void SqlOp::createTablesAndDatabase(){
 
   openDatabase("Database");
-  //createTable("users", " id INTEGER PRIMARY KEY AUTOINCREMENT, userId , computerId ");
   createTable("licenses", " id INTEGER PRIMARY KEY AUTOINCREMENT, license UNIQUE, inUse INTEGER , usedBy");
   insertValue("licenses", "'alex','0','0'");
   insertValue("licenses", "'vlad','0','1'");
