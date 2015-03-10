@@ -140,7 +140,7 @@ private:
                 if (license.compare("") == 0)
                 {
                   std::lock_guard<std::mutex> lg(mtx);
-                  license = Singleton::getInstance()->getUnusedLicences(msg);
+                  license = Singleton::getInstance().getUnusedLicences(msg);
                 }
               }
               buildPostResponse("200 OK");
@@ -308,7 +308,7 @@ public:
     Singleton::getInstance().resetLicence("licenses", "vlad");
     Singleton::getInstance().resetLicence("licenses", "adi");
     Singleton::getInstance().displayTable("licenses");
-    Singleton::getInstance().>openDatabase(dbName);
+    Singleton::getInstance().openDatabase(dbName);
     do_accept();
   }
 
