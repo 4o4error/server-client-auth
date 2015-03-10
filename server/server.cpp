@@ -311,6 +311,9 @@ public:
     Singleton::getInstance().openDatabase(dbName);
     do_accept();
   }
+  ~server(){
+    Singleton::getInstance().closeDatabase(dbName);
+  };
 
 private:
 
@@ -330,7 +333,7 @@ private:
 
     }
   }
-
+  
  // std::shared_ptr<session> shared_session;
   tcp::acceptor acceptor_;
   tcp::socket socket_;

@@ -188,10 +188,10 @@ bool SqlOp::displayTable(std::string table_name)
     sqlite3_free_table(results);
     return true;
   }
-bool SqlOp::closeDatabase()
+bool SqlOp::closeDatabase(std::string dbName)
   {
     // Close Database
-  sqlite3_close(db);
+  sqlite3_close(dbName);
   return true;
   }
 std::vector<std::vector<std::string> > SqlOp::query(char* query)
@@ -222,8 +222,6 @@ std::vector<std::vector<std::string> > SqlOp::query(char* query)
     sqlite3_step(statement);
     sqlite3_finalize(statement);
   }
-  //std::string error = sqlite3_errmsg(db);
-  //if (error != "not an error") std::cout << query << " " << error.c_str() << std::endl;
 
   return results;
 }
