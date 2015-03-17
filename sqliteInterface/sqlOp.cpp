@@ -3,6 +3,7 @@
 bool SqlOp::openDatabase(std::string database_name)
 {
   // Open Database
+<<<<<<< HEAD
   dbName = database_name;
   try
   {
@@ -18,6 +19,9 @@ bool SqlOp::openDatabase(std::string database_name)
    }
 
   /*std::cout << "Opening "<<database_name.c_str()<< std::endl;
+=======
+  std::cout << "Opening "<<database_name.c_str()<< std::endl;
+>>>>>>> parent of 0cc1d47... 46 memory leaks before this
 
   rc = sqlite3_open(database_name.c_str(), &db);
   if (rc)
@@ -30,7 +34,7 @@ bool SqlOp::openDatabase(std::string database_name)
   {
     std::cout << "Opened "<<database_name.c_str() << std::endl << std::endl;
     return true;
-  }*/
+  }
 }
 
 bool SqlOp::setLicence(std::string table_name, std::string licence, std::string user_name){
