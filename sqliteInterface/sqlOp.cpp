@@ -3,6 +3,7 @@
 bool SqlOp::openDatabase(std::string database_name)
 {
   // Open Database
+  dbName = database_name;
   try
   {
     if (sqlite3_open(database_name.c_str(), &db) == SQLITE_OK)
@@ -33,7 +34,7 @@ bool SqlOp::openDatabase(std::string database_name)
 }
 
 bool SqlOp::setLicence(std::string table_name, std::string licence, std::string user_name){
-
+  openDatabase(dbName);
   std::string str = "UPDATE " + table_name + " SET usedBy = '"+user_name+"'  WHERE license like '" + licence + "';";
   char * ch = new char[str.length() + 1];
   std::strcpy(ch, str.c_str());
@@ -42,12 +43,12 @@ bool SqlOp::setLicence(std::string table_name, std::string licence, std::string 
   std::strcpy(ch, str.c_str());
   query(ch);
   delete[] ch;
-
+  closeDatabase();
   return true;
 }
 
 bool SqlOp::resetLicence(std::string table_name, std::string licence){
-  
+  openDatabase(dbName);
   std::string str = "UPDATE " + table_name + " SET usedBy = '' WHERE license like '" + licence + "';";
   char * ch = new char[str.length() + 1];
   std::strcpy(ch, str.c_str());
@@ -56,7 +57,7 @@ bool SqlOp::resetLicence(std::string table_name, std::string licence){
   std::strcpy(ch, str.c_str());
   query(ch);
   delete[] ch;
-
+  closeDatabase();
   return true;
 }
 
@@ -64,6 +65,7 @@ bool SqlOp::resetLicence(std::string table_name, std::string licence){
 
 bool SqlOp::createTable(std::string table_name, std::string columns)
   {
+  openDatabase(dbName);
   try
   {
     std::string str = "CREATE TABLE " + table_name + "(" + columns + ");";
@@ -76,13 +78,15 @@ bool SqlOp::createTable(std::string table_name, std::string columns)
   catch (std::string e)
   {
     std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
+    closeDatabase();
     return false;
   }
+  closeDatabase();
   return true;
   }
 bool SqlOp::insertValue(std::string table_name, std::string values)
   {
-
+  openDatabase(dbName);
     try
     {
       std::string str = "INSERT INTO " + table_name + " VALUES(NULL, " + values + " );";
@@ -95,13 +99,16 @@ bool SqlOp::insertValue(std::string table_name, std::string values)
     catch (std::string e)
     {
       std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
+      closeDatabase();
       return false;
     }
+    closeDatabase();
     return true;
   
   }
 
 bool SqlOp::deleteTableContent(std::string table_name){
+  openDatabase(dbName);
   try
   {
     std::string str = "DELETE FROM " + table_name + ";";
@@ -114,12 +121,15 @@ bool SqlOp::deleteTableContent(std::string table_name){
   catch (std::string e)
   {
     std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
+    closeDatabase();
     return false;
   }
+  closeDatabase();
   return true;
 }
 
 bool SqlOp::deleteTable(std::string table_name){
+  openDatabase(dbName);
   try
   {
     deleteTableContent(table_name);
@@ -133,13 +143,16 @@ bool SqlOp::deleteTable(std::string table_name){
   catch (std::string e)
   {
     std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
+    closeDatabase();
     return false;
   }
+  closeDatabase();
   return true;
 }
 
 bool SqlOp::displayTable(std::string table_name)
   {
+  openDatabase(dbName);
     // Display MyTable
   std::cout << "Retrieving values  ..." << table_name.c_str() << std::endl;
   std::string query = "SELECT * FROM " + table_name + ";";
@@ -186,6 +199,7 @@ bool SqlOp::displayTable(std::string table_name)
       }
     }
     sqlite3_free_table(results);
+    closeDatabase();
     return true;
   }
 bool SqlOp::closeDatabase()
@@ -196,6 +210,7 @@ bool SqlOp::closeDatabase()
   }
 std::vector<std::vector<std::string> > SqlOp::query(char* query)
 {
+  openDatabase(dbName);
   sqlite3_stmt *statement;
   std::vector<std::vector<std::string> > results;
   if (sqlite3_prepare_v2(db, query, -1, &statement, 0) == SQLITE_OK)
@@ -222,12 +237,12 @@ std::vector<std::vector<std::string> > SqlOp::query(char* query)
     sqlite3_step(statement);
     sqlite3_finalize(statement);
   }
-
+  closeDatabase();
   return results;
 }
 
 std::string  SqlOp::getUnusedLicences(std::string user_name){
-
+  openDatabase(dbName);
   std::vector<std::vector<std::string>> results = query("SELECT * FROM licenses WHERE inUse LIKE '0' LIMIT 1 ");
   if (results.empty()){
     std::cout << "there are no unused licences";
@@ -237,7 +252,7 @@ std::string  SqlOp::getUnusedLicences(std::string user_name){
     setLicence("licenses", results[0][1].c_str(), user_name);
     return results[0][1];
   }
-  
+  closeDatabase();
 }
 
 void SqlOp::createTablesAndDatabase(){
@@ -247,6 +262,7 @@ void SqlOp::createTablesAndDatabase(){
   insertValue("licenses", "'alex','0','0'");
   insertValue("licenses", "'vlad','0','1'");
   insertValue("licenses", "'adi','0','2'");
+  closeDatabase();
 }
 
 

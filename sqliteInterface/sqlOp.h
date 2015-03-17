@@ -18,10 +18,11 @@ private:
   int rc;
   char *error;
   sqlite3 *db;
+  std::string dbName;
   std::vector<std::vector<std::string>> query(char* query);
 protected:
   SqlOp(){};
-  ~SqlOp(){};
+  ~SqlOp(){ delete[] error; delete db; };
 public:
   std::string tableN;
   bool openDatabase(std::string databse_name);
