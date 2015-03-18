@@ -23,7 +23,6 @@ protected:
   ~SqlOp(){ };
 public:
   std::vector<std::string> query(char* query);
-  std::string tableN;
   bool openDatabase(std::string databse_name);
   bool createTable(std::string table_name, std::string columns);
   bool insertValue(std::string table_name, std::string values);

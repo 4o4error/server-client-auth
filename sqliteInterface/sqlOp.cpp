@@ -11,14 +11,16 @@ bool SqlOp::openDatabase(std::string database_name)
       // failed
       fprintf(stderr, "ERROR: Can't open database: %s\n", sqlite3_errmsg(db));
       closeDatabase();
+      return false;
     }
+
   }
   catch (std::string e)
   {
       std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
         return false;
    }
-
+  return true;
 }
 
 bool SqlOp::setLicence(std::string table_name, std::string licence, std::string user_name){
@@ -146,7 +148,6 @@ bool SqlOp::closeDatabase()
     // Close Database
   sqlite3_free(error);
   sqlite3_close(db);
-  sqlite3_free(db);
   return true;
   }
 std::vector<std::string> SqlOp::query(char* query)
@@ -177,13 +178,24 @@ std::vector<std::string> SqlOp::query(char* query)
     sqlite3_step(statement);
     sqlite3_finalize(statement);
   }
+  std::vector<std::string> toSend;
+  std::vector<std::vector<std::string> >::iterator it;
+  for (it = results.begin(); it != results.end(); ++it)
+  {
+    toSend = *it;
+  }
 
-  return results[0];
+  return toSend;
 }
 
 std::string  SqlOp::getUnusedLicences(std::string user_name){
 
-  std::vector<std::string> results = query("SELECT * FROM licenses WHERE inUse LIKE '0' LIMIT 1 ");
+  std::vector<std::string> results;
+  char *ch = "SELECT * FROM licenses WHERE inUse LIKE '0' LIMIT 1 ";
+
+  results= query(ch);
+  delete[] ch;
+
   if (results.empty()){
     std::cout << "there are no unused licences";
     return "-1";

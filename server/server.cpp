@@ -308,7 +308,7 @@ public:
     Singleton::getInstance().resetLicence("licenses", "vlad");
     Singleton::getInstance().resetLicence("licenses", "adi");
     Singleton::getInstance().displayTable("licenses");
-
+    
     do_accept();
   }
   ~server(){
