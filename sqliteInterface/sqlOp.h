@@ -18,12 +18,11 @@ private:
   int rc;
   char *error;
   sqlite3 *db;
-  std::string dbName;
-  std::vector<std::vector<std::string>> query(char* query);
 protected:
   SqlOp(){};
-  ~SqlOp(){ delete[] error; delete db; };
+  ~SqlOp(){ };
 public:
+  std::vector<std::string> query(char* query);
   std::string tableN;
   bool openDatabase(std::string databse_name);
   bool createTable(std::string table_name, std::string columns);
@@ -31,12 +30,8 @@ public:
   bool setLicence(std::string table_name, std::string licence, std::string user_name);
   bool resetLicence(std::string table_name, std::string licence);
   bool displayTable(std::string table_name);
-  bool deleteTable(std::string table_name);
-  bool deleteTableContent(std::string table_name);
   std::string getUnusedLicences(std::string  user_name);
-
   void createTablesAndDatabase();
-
   bool closeDatabase();
 };
 

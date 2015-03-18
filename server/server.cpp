@@ -302,13 +302,13 @@ public:
     context_.use_tmp_dh_file("dh512.pem");
 
     //create database; 
+    Singleton::getInstance().openDatabase(dbName);
     Singleton::getInstance().createTablesAndDatabase();
-
     Singleton::getInstance().resetLicence("licenses", "alex");
     Singleton::getInstance().resetLicence("licenses", "vlad");
     Singleton::getInstance().resetLicence("licenses", "adi");
     Singleton::getInstance().displayTable("licenses");
-    Singleton::getInstance().openDatabase(dbName);
+
     do_accept();
   }
   ~server(){

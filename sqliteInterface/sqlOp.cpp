@@ -3,14 +3,15 @@
 bool SqlOp::openDatabase(std::string database_name)
 {
   // Open Database
-<<<<<<< HEAD
-  dbName = database_name;
   try
   {
-    if (sqlite3_open(database_name.c_str(), &db) == SQLITE_OK)
-      return true;
+    rc = sqlite3_open(database_name.c_str(), &db); 
 
-    return false;
+    if (rc){
+      // failed
+      fprintf(stderr, "ERROR: Can't open database: %s\n", sqlite3_errmsg(db));
+      closeDatabase();
+    }
   }
   catch (std::string e)
   {
@@ -18,27 +19,10 @@ bool SqlOp::openDatabase(std::string database_name)
         return false;
    }
 
-  /*std::cout << "Opening "<<database_name.c_str()<< std::endl;
-=======
-  std::cout << "Opening "<<database_name.c_str()<< std::endl;
->>>>>>> parent of 0cc1d47... 46 memory leaks before this
-
-  rc = sqlite3_open(database_name.c_str(), &db);
-  if (rc)
-  {
-    std::cerr << "Error opening SQLite3 database: " << sqlite3_errmsg(db) << std::endl << std::endl;
-    sqlite3_close(db);
-    return false;
-  }
-  else
-  {
-    std::cout << "Opened "<<database_name.c_str() << std::endl << std::endl;
-    return true;
-  }
 }
 
 bool SqlOp::setLicence(std::string table_name, std::string licence, std::string user_name){
-  openDatabase(dbName);
+
   std::string str = "UPDATE " + table_name + " SET usedBy = '"+user_name+"'  WHERE license like '" + licence + "';";
   char * ch = new char[str.length() + 1];
   std::strcpy(ch, str.c_str());
@@ -47,12 +31,12 @@ bool SqlOp::setLicence(std::string table_name, std::string licence, std::string 
   std::strcpy(ch, str.c_str());
   query(ch);
   delete[] ch;
-  closeDatabase();
+
   return true;
 }
 
 bool SqlOp::resetLicence(std::string table_name, std::string licence){
-  openDatabase(dbName);
+  
   std::string str = "UPDATE " + table_name + " SET usedBy = '' WHERE license like '" + licence + "';";
   char * ch = new char[str.length() + 1];
   std::strcpy(ch, str.c_str());
@@ -61,7 +45,7 @@ bool SqlOp::resetLicence(std::string table_name, std::string licence){
   std::strcpy(ch, str.c_str());
   query(ch);
   delete[] ch;
-  closeDatabase();
+
   return true;
 }
 
@@ -69,7 +53,6 @@ bool SqlOp::resetLicence(std::string table_name, std::string licence){
 
 bool SqlOp::createTable(std::string table_name, std::string columns)
   {
-  openDatabase(dbName);
   try
   {
     std::string str = "CREATE TABLE " + table_name + "(" + columns + ");";
@@ -82,15 +65,13 @@ bool SqlOp::createTable(std::string table_name, std::string columns)
   catch (std::string e)
   {
     std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
-    closeDatabase();
     return false;
   }
-  closeDatabase();
   return true;
   }
 bool SqlOp::insertValue(std::string table_name, std::string values)
   {
-  openDatabase(dbName);
+
     try
     {
       std::string str = "INSERT INTO " + table_name + " VALUES(NULL, " + values + " );";
@@ -103,60 +84,15 @@ bool SqlOp::insertValue(std::string table_name, std::string values)
     catch (std::string e)
     {
       std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
-      closeDatabase();
       return false;
     }
-    closeDatabase();
     return true;
   
   }
 
-bool SqlOp::deleteTableContent(std::string table_name){
-  openDatabase(dbName);
-  try
-  {
-    std::string str = "DELETE FROM " + table_name + ";";
-    char * ch = new char[str.length() + 1];
-    std::strcpy(ch, str.c_str());
-    query(ch);
-    delete[] ch;
-
-  }
-  catch (std::string e)
-  {
-    std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
-    closeDatabase();
-    return false;
-  }
-  closeDatabase();
-  return true;
-}
-
-bool SqlOp::deleteTable(std::string table_name){
-  openDatabase(dbName);
-  try
-  {
-    deleteTableContent(table_name);
-    std::string str = "DROP TABLE " + table_name + ";";
-    char * ch = new char[str.length() + 1];
-    std::strcpy(ch, str.c_str());
-    query(ch);
-    delete[] ch;
-
-  }
-  catch (std::string e)
-  {
-    std::cout << "An exception occurred. Exception : " << e.c_str() << '\n';
-    closeDatabase();
-    return false;
-  }
-  closeDatabase();
-  return true;
-}
 
 bool SqlOp::displayTable(std::string table_name)
   {
-  openDatabase(dbName);
     // Display MyTable
   std::cout << "Retrieving values  ..." << table_name.c_str() << std::endl;
   std::string query = "SELECT * FROM " + table_name + ";";
@@ -203,18 +139,18 @@ bool SqlOp::displayTable(std::string table_name)
       }
     }
     sqlite3_free_table(results);
-    closeDatabase();
     return true;
   }
 bool SqlOp::closeDatabase()
   {
     // Close Database
+  sqlite3_free(error);
   sqlite3_close(db);
+  sqlite3_free(db);
   return true;
   }
-std::vector<std::vector<std::string> > SqlOp::query(char* query)
+std::vector<std::string> SqlOp::query(char* query)
 {
-  openDatabase(dbName);
   sqlite3_stmt *statement;
   std::vector<std::vector<std::string> > results;
   if (sqlite3_prepare_v2(db, query, -1, &statement, 0) == SQLITE_OK)
@@ -241,32 +177,30 @@ std::vector<std::vector<std::string> > SqlOp::query(char* query)
     sqlite3_step(statement);
     sqlite3_finalize(statement);
   }
-  closeDatabase();
-  return results;
+
+  return results[0];
 }
 
 std::string  SqlOp::getUnusedLicences(std::string user_name){
-  openDatabase(dbName);
-  std::vector<std::vector<std::string>> results = query("SELECT * FROM licenses WHERE inUse LIKE '0' LIMIT 1 ");
+
+  std::vector<std::string> results = query("SELECT * FROM licenses WHERE inUse LIKE '0' LIMIT 1 ");
   if (results.empty()){
     std::cout << "there are no unused licences";
     return "-1";
   }
   else{
-    setLicence("licenses", results[0][1].c_str(), user_name);
-    return results[0][1];
+    setLicence("licenses", results[1].c_str(), user_name);
+    return results[1];
   }
-  closeDatabase();
+  
 }
 
 void SqlOp::createTablesAndDatabase(){
 
-  openDatabase("Database");
   createTable("licenses", " id INTEGER PRIMARY KEY AUTOINCREMENT, license UNIQUE, inUse INTEGER , usedBy");
   insertValue("licenses", "'alex','0','0'");
   insertValue("licenses", "'vlad','0','1'");
   insertValue("licenses", "'adi','0','2'");
-  closeDatabase();
 }
 
 
