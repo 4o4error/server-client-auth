@@ -18,7 +18,7 @@ private:
   int rc;
   char *error;
   sqlite3 *db;
-protected:
+public:
   SqlOp(){};
   ~SqlOp(){ };
 public:

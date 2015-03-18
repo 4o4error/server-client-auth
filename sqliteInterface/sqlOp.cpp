@@ -27,13 +27,9 @@ bool SqlOp::openDatabase(std::string database_name)
 bool SqlOp::setLicence(std::string table_name, std::string licence, std::string user_name){
 
   std::string str = "UPDATE " + table_name + " SET usedBy = '"+user_name+"'  WHERE license like '" + licence + "';";
-  char * ch = new char[str.length() + 1];
-  std::strcpy(ch, str.c_str());
-  query(ch);
+  query(str);
   str = "UPDATE " + table_name + " SET inUse = '1' WHERE license like '"+licence+"';";
-  std::strcpy(ch, str.c_str());
-  query(ch);
-  delete[] ch;
+  query(str);
 
   return true;
 }
@@ -41,13 +37,9 @@ bool SqlOp::setLicence(std::string table_name, std::string licence, std::string 
 bool SqlOp::resetLicence(std::string table_name, std::string licence){
   
   std::string str = "UPDATE " + table_name + " SET usedBy = '' WHERE license like '" + licence + "';";
-  char * ch = new char[str.length() + 1];
-  std::strcpy(ch, str.c_str());
-  query(ch);
+  query(str);
   str = "UPDATE " + table_name + " SET inUse = '0' WHERE license like '" + licence + "';";
-  std::strcpy(ch, str.c_str());
-  query(ch);
-  delete[] ch;
+  query(str);
 
   return true;
 }
@@ -59,11 +51,8 @@ bool SqlOp::createTable(std::string table_name, std::string columns)
   try
   {
     std::string str = "CREATE TABLE " + table_name + "(" + columns + ");";
-    char * ch = new char[str.length() + 1];
-    std::strcpy(ch, str.c_str());
-    query(ch);
-    delete[] ch;
-    
+    query(str);
+
   }
   catch (std::string e)
   {
@@ -78,11 +67,7 @@ bool SqlOp::insertValue(std::string table_name, std::string values)
     try
     {
       std::string str = "INSERT INTO " + table_name + " VALUES(NULL, " + values + " );";
-      char * ch = new char[str.length() + 1];
-      std::strcpy(ch, str.c_str());
-      query(ch);
-      delete[] ch;
-
+      query(str);
     }
     catch (std::string e)
     {
@@ -99,10 +84,9 @@ bool SqlOp::displayTable(std::string table_name)
     // Display MyTable
   std::cout << "Retrieving values  ..." << table_name.c_str() << std::endl;
   std::string query = "SELECT * FROM " + table_name + ";";
-    const char *sqlSelect = query.c_str();
     char **results = NULL;
     int rows, columns;
-    sqlite3_get_table(db, sqlSelect, &results, &rows, &columns, &error);
+    sqlite3_get_table(db, query.c_str(), &results, &rows, &columns, &error);
     if (rc)
     {
       std::cerr << "Error executing SQLite3 query: " << sqlite3_errmsg(db) << std::endl << std::endl;
@@ -149,6 +133,7 @@ bool SqlOp::closeDatabase()
     // Close Database
   sqlite3_free(error);
   sqlite3_close(db);
+
   return true;
   }
 std::vector<std::string> SqlOp::query(std::string query)
