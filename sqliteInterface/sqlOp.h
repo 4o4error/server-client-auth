@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cstring>
 #include "sqlite3.h"
-
+#include <mutex>
 #include <vector>
 
 //build opts
@@ -22,7 +22,8 @@ protected:
   SqlOp(){};
   ~SqlOp(){ };
 public:
-  std::vector<std::string> query(char* query);
+  std::mutex thr_mutex;
+  std::vector<std::string> query(std::string query);
   bool openDatabase(std::string databse_name);
   bool createTable(std::string table_name, std::string columns);
   bool insertValue(std::string table_name, std::string values);

@@ -1,5 +1,6 @@
 #include "sqlOp.h"
 
+
 bool SqlOp::openDatabase(std::string database_name)
 {
   // Open Database
@@ -150,11 +151,11 @@ bool SqlOp::closeDatabase()
   sqlite3_close(db);
   return true;
   }
-std::vector<std::string> SqlOp::query(char* query)
+std::vector<std::string> SqlOp::query(std::string query)
 {
   sqlite3_stmt *statement;
   std::vector<std::vector<std::string> > results;
-  if (sqlite3_prepare_v2(db, query, -1, &statement, 0) == SQLITE_OK)
+  if (sqlite3_prepare_v2(db, query.c_str(), -1, &statement, 0) == SQLITE_OK)
   {
     int cols = sqlite3_column_count(statement);
     int result = 0;
@@ -190,11 +191,13 @@ std::vector<std::string> SqlOp::query(char* query)
 
 std::string  SqlOp::getUnusedLicences(std::string user_name){
 
+
+  std::lock_guard<std::mutex> lock(thr_mutex);
   std::vector<std::string> results;
-  char *ch = "SELECT * FROM licenses WHERE inUse LIKE '0' LIMIT 1 ";
+  std::string ch = "SELECT * FROM licenses WHERE inUse LIKE '0' LIMIT 1 ";
 
   results= query(ch);
-  delete[] ch;
+ 
 
   if (results.empty()){
     std::cout << "there are no unused licences";
