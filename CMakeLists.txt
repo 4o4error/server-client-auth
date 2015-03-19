@@ -57,6 +57,7 @@ IF(BUILD_DOCUMENTATION)
   SET( doxyfile_in          ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in     )
   SET( doxyfile             ${PROJECT_BINARY_DIR}/Doxyfile              )
   SET( doxy_html_index_file ${CMAKE_CURRENT_BINARY_DIR}/html/index.html )
+  SET( EXCLUDE_PATTERNS =   */tests/*)
   SET( doxy_output_root     ${CMAKE_CURRENT_BINARY_DIR}/documentation   ) # Pasted into Doxyfile.in
   SET( doxy_input           ${PROJECT_SOURCE_DIR}/                      ) # Pasted into Doxyfile.in
   SET( doxy_extra_files     ${CMAKE_CURRENT_SOURCE_DIR}/mainpage.dox    ) # Pasted into Doxyfile.in

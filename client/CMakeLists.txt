@@ -9,9 +9,8 @@ MESSAGE("Building client library")
 # Set the include paths for the CMake scripts that will be used to find other libs.
 
 SET (SOURCE_FILES_CLIENT
+${PROJECT_SOURCE_DIR}/include/client/SslClientAuthDll.h
 ${CMAKE_CURRENT_SOURCE_DIR}/SslAuthClientDll.cpp
-${CMAKE_CURRENT_SOURCE_DIR}/SslClientAuthDll.h
-
 )
 
 #only for Visual Studio

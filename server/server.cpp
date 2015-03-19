@@ -55,6 +55,9 @@ public:
 
   }
 private:
+  /***
+  *  starts readwrite thread (nonblocking)
+  */
   void do_work(){
     readWriteThread = std::thread(&session::do_readwrite, this);
   }

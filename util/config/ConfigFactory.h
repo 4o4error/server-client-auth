@@ -10,7 +10,6 @@ namespace config{
       static ConfigReader INSTANCE;
       return INSTANCE;
     }
-    \
   };
   
 }

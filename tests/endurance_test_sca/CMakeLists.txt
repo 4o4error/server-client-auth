@@ -11,6 +11,7 @@ FIND_PACKAGE(OpenSSL REQUIRED)
 
 link_directories(${PROJECT_SOURCE_DIR}/build/)
 include_directories(${PROJECT_SOURCE_DIR}/
+                    ${PROJECT_SOURCE_DIR}/include
                     ${GTest_INCLUDE_DIR}
                     ${OPENSSL_INCLUDE_DIR}
                     ${ASIO_INCLUDE_DIR}

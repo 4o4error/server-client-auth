@@ -1,4 +1,4 @@
-#include "ConfigException.h"
+#include "util\config\ConfigException.h"
 
 namespace config{
   ConfigException::ConfigException(const char* exception): exception_(exception){}
