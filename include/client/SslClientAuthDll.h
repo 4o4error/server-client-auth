@@ -1,7 +1,5 @@
-#pragma once;
-
-
-
+#ifndef SSLCLIENTAUTHDLL_H_
+#define SSLCLIENTAUTHDLL_H_
 #include <cstdlib>
 #include <iostream>
 #include <asio.hpp>
@@ -56,3 +54,4 @@ namespace auth
 
 
 
+#endif // SSLCLIENTAUTHDLL_H_
